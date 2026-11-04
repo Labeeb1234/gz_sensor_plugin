@@ -6,6 +6,9 @@
 - GZ SIM VERSION 7.9.0 (Gazebo Garden)
 
 ## Notes For setup After Building:
+ - The building process is done using **cmake** to get the make instructions and **make** for building, all commands given within the build folder; standard stuff
+ - Please note I got sidetracked and did this so the codebase is rough around the edges and does not follow the ABI arch of the standard gz sim plugins, will do this later on if time permits
+ - TBA: adding Bias and Dynamic Bias to the sensor readings and also to extend this for magnetometer sensor plugin of the gz sim
  - After building copy paste these cmds given below
  
  - For the GZ SYSTEM PLUGIN:
