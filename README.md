@@ -25,14 +25,7 @@
 ## Demo Video
 
  - **Vid-1** [Without any Sensor Noise or Bias]
- 
-
-
-<video src="https://github.com/user-attachments/assets/3d55f9d0-4135-4539-9424-0400a09057e1" />
-
-
-
-
+<video src="https://github.com/user-attachments/assets/3d55f9d0-4135-4539-9424-0400a09057e1" controls width="100%"/>
 
  - **Vid-2** [With Sensor Noise and Bias using Gaussian Probability Distribution]
 
