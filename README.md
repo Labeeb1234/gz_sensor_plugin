@@ -24,14 +24,14 @@
 
 ## Demo Video
 
- - **Vid-1** [Without any Sensor Noise or Bias]
-<video src="https://github.com/user-attachments/assets/3d55f9d0-4135-4539-9424-0400a09057e1" controls width="100%" />
+- **Vid-1** [Without any Sensor Noise or Bias]
+  [Watch Vid-1 (MP4)](https://github.com/user-attachments/assets/3d55f9d0-4135-4539-9424-0400a09057e1)
 
- - **Vid-2** [With Sensor Noise and Bias using Gaussian Probability Distribution]
-<video src="https://github.com/user-attachments/assets/f618f34e-0cf9-40ae-9b3c-19b6d5bf5552" controls width="100%" />
+- **Vid-2** [With Sensor Noise and Bias using Gaussian Probability Distribution]
+  [Watch Vid-2 (MP4)](https://github.com/user-attachments/assets/f618f34e-0cf9-40ae-9b3c-19b6d5bf5552)
 
- - **Vid-3** [Working of the custom gui plugin for dynamically changing the sensor model params]
-<video src="https://github.com/user-attachments/assets/46c10a4d-8ab8-46c3-bfb5-9e415ba6b47c" controls width="100%" />
+- **Vid-3** [Working of the custom gui plugin for dynamically changing the sensor model params]
+  [Watch Vid-3 (MP4)](https://github.com/user-attachments/assets/46c10a4d-8ab8-46c3-bfb5-9e415ba6)
 
 ## Notes:
 - The GZ SIM API docs may change with versions used so the reference link to that document provided in the references section is for the Garden Version or GZ SIM VER(7)
