@@ -477,7 +477,7 @@ void TestSensorDataPlugin::PostUpdate(
     // for the first test logic for the imu data updation put logic here , lets not modify the in-physics sensor unless and untill we create our own sensor model
     gz::math::Vector3d new_accel;
     gz::math::Vector3d new_gyro;
-    if(!this->accel_noise_vec_.empty()){
+    if(!this->accel_noise_vec_.empty() && !this->gyro_noise_vec_.empty()){
         this->updateImuReadings(
             new_accel,
             new_gyro,
