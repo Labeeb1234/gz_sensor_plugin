@@ -5,15 +5,32 @@
 
 - GZ SIM VERSION 7.9.0 (Gazebo Garden)
 
+## Notes For setup After Building:
+ - After building copy paste these cmds given below
+ 
+ - For the GZ SYSTEM PLUGIN:
+  ```bash
+ export GZ_SIM_SYSTEM_PLUGIN_PATH=$GZ_SIM_SYSTEM_PLUGIN_PATH:<path_to_your_build_folder>
+   ```
+
+ - For the GZ GUI PLUGIN:
+ ```bash
+ export GZ_GUI_PLUGIN_PATH=$GZ_GUI_PLUGIN_PATH:<path_to_your_build_folder>
+ ```
+
+
 ## Demo Video
 
  - **Vid-1** [Without any Sensor Noise or Bias]
  
- <video src="https://github.com/Labeeb1234/gz_sensor_plugin/blob/main/media/imu_ideal.mp4" controls width="100%"></video>
+ <video src="media/imu_ideal.mp4" controls width="100%"></video>
 
 
 
  - **Vid-2** [With Sensor Noise and Bias using Gaussian Probability Distribution]
+
+
+ - **Vid-3** [Working of the custom gui plugin for dynamically changing the sensor model params]
 
 
 ## Notes:
