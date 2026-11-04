@@ -16,7 +16,7 @@
 
 
 ## References
-- (basics_on_gz_sim_plugins)[https://gazebosim.org/api/sim/8/createsystemplugins.html]
-- (some bare bones examples)[https://gazebosim.org/api/sim/8/migrationplugins.html]
-- (gz_sim_plugin can be used as templates to write custom plugins)[https://github.com/gazebosim/gz-sim/blob/gz-sim7/src/systems/joint_position_controller/JointPositionController.cc#L484]
-- (GZ SIM API documentation link)[https://gazebosim.org/api/sim/7/classgz_1_1sim_1_1EntityComponentManager.html#a6d3cc1a13259adb16e330f6e8df42c66]
+- [basics_on_gz_sim_plugins](https://gazebosim.org/api/sim/8/createsystemplugins.html)
+- [some bare bones examples](https://gazebosim.org/api/sim/8/migrationplugins.html)
+- [gz_sim_plugin can be used as templates to write custom plugins](https://github.com/gazebosim/gz-sim/blob/gz-sim7/src/systems/joint_position_controller/JointPositionController.cc#L484)
+- [GZ SIM API documentation link](https://gazebosim.org/api/sim/7/classgz_1_1sim_1_1EntityComponentManager.html#a6d3cc1a13259adb16e330f6e8df42c66]
