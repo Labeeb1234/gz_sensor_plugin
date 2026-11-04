@@ -26,7 +26,7 @@
 
  - **Vid-1** [Without any Sensor Noise or Bias]
  
- <video src="media/imu_ideal.mp4" controls width="100%"></video>
+ <video src="[media/imu_ideal.mp](https://githubusercontent.com)4" controls width="100%"></video>
 
 
 
