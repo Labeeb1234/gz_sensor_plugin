@@ -1,3 +1,0 @@
-/home/inlabust/labeeb/block_step/sensor_data_plugin/build/CMakeFiles/TestSensorDataPlugin.dir
-/home/inlabust/labeeb/block_step/sensor_data_plugin/build/CMakeFiles/edit_cache.dir
-/home/inlabust/labeeb/block_step/sensor_data_plugin/build/CMakeFiles/rebuild_cache.dir
