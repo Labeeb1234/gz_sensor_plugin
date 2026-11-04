@@ -5,7 +5,8 @@
 
 ## Demo Video
  - **Vid-1** [Without any Sensor Noise or Bias]
-<video src="https://github.com/Labeeb1234/gz_sensor_plugin/blob/main/media/imu_ideal.mp4" controls width="100%"></video>
+ 
+ <video src="https://github.com/Labeeb1234/gz_sensor_plugin/blob/main/media/imu_ideal.mp4" controls width="100%"></video>
 
 
 
