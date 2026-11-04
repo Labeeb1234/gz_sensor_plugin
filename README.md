@@ -1,10 +1,11 @@
 
+
 ## Software Configuration
 - GZ SIM VERSION 7.9.0 (Gazebo Garden)
 
 ## Demo Video
  - **Vid-1** [Without any Sensor Noise or Bias]
-
+<video src="media/demo.mp4" controls width="100%"></video>
 
 
 
