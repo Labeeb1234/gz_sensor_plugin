@@ -34,7 +34,7 @@
 
 - **Vid-3** [Working of the custom gui plugin for dynamically changing the sensor model params]
 
-  [custom_GUI_demo](https://github.com/user-attachments/assets/46c10a4d-8ab8-46c3-bfb5-9e415ba6)
+  [custom_GUI_demo](https://github.com/user-attachments/assets/bdd40b66-581d-4b38-826c-77382ffa6532)
 
 ## Notes:
 - The GZ SIM API docs may change with versions used so the reference link to that document provided in the references section is for the Garden Version or GZ SIM VER(7)
