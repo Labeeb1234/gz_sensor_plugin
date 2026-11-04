@@ -889,6 +889,7 @@ CMakeFiles/TestSensorDataPlugin.dir/sensor_data.cc.o: \
  /usr/include/gz/transport12/gz/transport/TopicUtils.hh \
  /usr/include/gz/transport12/gz/transport/detail/Node.hh \
  /usr/include/gz/msgs9/gz/msgs/vector3d.pb.h \
+ /usr/include/gz/msgs9/gz/msgs/double_v.pb.h \
  /usr/include/gz/sim7/gz/sim/config.hh \
  /usr/include/gz/common5/gz/common/Console.hh \
  /usr/include/gz/sim7/gz/sim/Util.hh \

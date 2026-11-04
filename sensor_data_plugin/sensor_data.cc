@@ -37,6 +37,8 @@
 #include "gz/math7/gz/math/Vector3.hh"
 
 
+// eventually convert this to the Pointer to implmentation format for complaice with ABI arch of GZ sim
+
 class TestSensorDataPlugin: 
     public gz::sim::System, 
     public gz::sim::ISystemConfigure,
@@ -62,9 +64,11 @@ private:
     std::string input_topic_name_;
     std::string sensor_params_topic_;
     float imu_update_rate_; // the og imu topic update rate used to update the publishing rate of this one too
-    std::mt19937 gen_; // random num generator
 
     // custom construtor to store the Noise and bias params of the sensor model
+    std::mt19937 gen_; // random num generator
+    std::normal_distribution<double> accel_noise_{0.0, 0.0}, gyro_noise_{0.0, 0.0};
+    std::vector<double> accel_noise_vec_{0.0, 0.0, 0.0}, gyro_noise_vec_{0.0, 0.0, 0.0};
     struct SensorParams{
         double mean;
         double std_dev;
@@ -72,7 +76,10 @@ private:
         double bias_std_dev;
         double dynamic_bias_std_dev;
         double dynamic_bias_correlation_time;
-    }sensor_params_;
+    }sensor_params_; // sensor_params_ attirb will act as a temp storage var to store the callback data
+    std::vector<SensorParams> accel_params_, gyro_params_;
+
+
     bool sensor_params_updated_ = false;
 
 
@@ -146,14 +153,21 @@ private:
     }; // publish the new updates sensor readings to the respective gz topics also control the publish rate too based on sensor update rate
     
     
-    // input args are the og accel and gyro data
+    // input args are the og accel and gyro data for adding to post update state need two args to store new accel and gyro readings
     void updateImuReadings(
-        gz::math::Vector3d& _accel,
-        gz::math::Vector3d& _gyro
+        gz::math::Vector3d& _new_accel,
+        gz::math::Vector3d& _new_gyro,
+        const gz::math::Vector3d& _accel,
+        const gz::math::Vector3d& _gyro
     ){
         {
             std::lock_guard<std::mutex> lock(this->imu_param_mutex_);
-            
+            _new_accel.X() = _accel.X() + this->accel_noise_vec_[0]; //  for now add only noise model for each axes
+            _new_accel.Y() = _accel.Y() + this->accel_noise_vec_[1];
+            _new_accel.Z() = _accel.Z() + this->accel_noise_vec_[2];
+            _new_gyro.X() = _gyro.X() + this->gyro_noise_vec_[0];
+            _new_gyro.Y() = _gyro.Y() + this->gyro_noise_vec_[1];
+            _new_gyro.Z() = _gyro.Z() + this->gyro_noise_vec_[2];
         }
     } // update imu data with according to noise and bias param updates
     
@@ -166,7 +180,7 @@ private:
         this->sensor_params_.std_dev = msg.data(1);
         this->sensor_params_.bias_mean = msg.data(2);
         this->sensor_params_.bias_std_dev = msg.data(3);
-        this->sensor_params_.dynamic_bias_std = msg.data(4);
+        this->sensor_params_.dynamic_bias_std_dev = msg.data(4);
         this->sensor_params_.dynamic_bias_correlation_time = msg.data(5);
         this->sensor_params_updated_= msg.data(6) == 1.0 ? true : false;
     };
@@ -198,7 +212,7 @@ public:
 
 };
 
-TestSensorDataPlugin::TestSensorDataPlugin(){
+TestSensorDataPlugin::TestSensorDataPlugin(): gen_(std::random_device{}()){
     gzmsg << "Loading Test Sensor Data Plugin for testing!" << std::endl;
 }
 TestSensorDataPlugin::~TestSensorDataPlugin() = default;
@@ -255,13 +269,51 @@ void TestSensorDataPlugin::Configure(
     }
     gzmsg << "setting sensor parameter update topic as: " << this->sensor_params_topic_  << std::endl;
 
+    // extract the imu noise and bias model the default initial values on loading of the plugin
+    if(this->imu_entity_ != gz::sim::kNullEntity){
+        if(!_ecm.EntityHasComponentType(this->imu_entity_, gz::sim::components::Imu::typeId)){
+            // add error logs if not found imu component
+            return;
+        }
+        // update initial values of the sensor noise and bias model here
+        auto imu_comp = _ecm.Component<gz::sim::components::Imu>(this->imu_entity_);
+        const sdf::Sensor& sensor_sdf = imu_comp->Data(); // get imu sdf element props from here 
+        const sdf::Imu* imu_sdf = sensor_sdf.ImuSensor();
 
-    // initialize random number gen for making a normal
-    std::random_device rd;
+        // creating a lambda func for this task
+        auto setSensorParams = [](const sdf::Noise& _noise, std::vector<SensorParams>& sens_params){
+            SensorParams params;
+            params.mean = _noise.Mean();
+            params.std_dev = _noise.StdDev();
+            params.bias_mean = _noise.BiasMean();
+            params.bias_std_dev = _noise.BiasStdDev();
+            params.dynamic_bias_std_dev = _noise.DynamicBiasStdDev();
+            params.dynamic_bias_correlation_time = _noise.DynamicBiasCorrelationTime();
+            sens_params.push_back(params);
+        };
 
+        this->accel_params_.reserve(3); // for 3 axis quantities
+        this->gyro_params_.reserve(3);
+        // set accelerometer params
+        setSensorParams(imu_sdf->LinearAccelerationXNoise(), this->accel_params_);
+        setSensorParams(imu_sdf->LinearAccelerationYNoise(), this->accel_params_);
+        setSensorParams(imu_sdf->LinearAccelerationZNoise(), this->accel_params_);
+        // set gyro params
+        setSensorParams(imu_sdf->AngularVelocityXNoise(), this->gyro_params_);
+        setSensorParams(imu_sdf->AngularVelocityYNoise(), this->gyro_params_);
+        setSensorParams(imu_sdf->AngularVelocityZNoise(), this->gyro_params_);
 
-
-
+        // check noise and bias model type (probability distribution function)
+        // ADD LAST SON!!!!!!!!!!!!!!
+        bool subscribed = this->node_.Subscribe(
+            this->sensor_params_topic_,
+            &TestSensorDataPlugin::onParamUpdateCallback,
+            this
+        );
+        if(!subscribed){
+                gzerr << "Failed to subscribe to sensor params topic: " << this->sensor_params_topic_ << std::endl;
+        }
+    }
 }
 
 void TestSensorDataPlugin::PreUpdate(
@@ -297,7 +349,6 @@ void TestSensorDataPlugin::PreUpdate(
     const sdf::Imu* imu_sdf = sensor_sdf.ImuSensor();
     this->input_topic_name_ = sensor_sdf.Topic();
     this->imu_update_rate_ = sensor_sdf.UpdateRate(); // Extract IMU update rate param too here    // a log before the physics update of one iteration
-    // logCurrentSensorNoiseBiasParams(imu_sdf);
 
     // initialize imu data publisher
     if(!this->publishers_initialized_){
@@ -323,11 +374,76 @@ void TestSensorDataPlugin::PreUpdate(
         }
     }
 
+    // ---------------------- SENSOR PARAMS UPDATION LOGIC HERE ----------------------
+    // more pre update logics
+    // after subscription check for update flag if that is true then update the sensor noise and bias model params
+    double accel_mean = 0.0, accel_sigma = 0.0;
+    double gyro_mean = 0.0, gyro_sigma = 0.0; // later change to vector
+    {
+        std::lock_guard<std::mutex> lock(this->imu_param_mutex_);
+        if(this->sensor_params_updated_){
+            if(!this->accel_params_.empty()){
+                for(int i=0; i<this->accel_params_.size(); ++i){
+                    this->accel_params_[i].mean = this->sensor_params_.mean;
+                    this->accel_params_[i].std_dev = this->sensor_params_.std_dev;
+                    this->accel_params_[i].bias_mean = this->sensor_params_.bias_mean;
+                    this->accel_params_[i].bias_std_dev = this->sensor_params_.bias_std_dev;
+                    this->accel_params_[i].dynamic_bias_std_dev = this->sensor_params_.dynamic_bias_std_dev;
+                    this->accel_params_[i].dynamic_bias_correlation_time = this->sensor_params_.dynamic_bias_correlation_time;
+                }
+            }
+            if(!this->gyro_params_.empty()){
+                for(int i=0; i<this->gyro_params_.size(); ++i){
+                    this->gyro_params_[i].mean = this->sensor_params_.mean;
+                    this->gyro_params_[i].std_dev = this->sensor_params_.std_dev;
+                    this->gyro_params_[i].bias_mean = this->sensor_params_.bias_mean;
+                    this->gyro_params_[i].bias_std_dev = this->sensor_params_.bias_std_dev;
+                    this->gyro_params_[i].dynamic_bias_std_dev = this->sensor_params_.dynamic_bias_std_dev;
+                    this->gyro_params_[i].dynamic_bias_correlation_time = this->sensor_params_.dynamic_bias_correlation_time;
+                }
+            }
+            // since all axis params as same for now just safely store locally withing scope to prevent
+            if(!this->accel_params_.empty()){
+                accel_mean = this->accel_params_[0].mean;
+                accel_sigma = this->accel_params_[0].std_dev;
+            }
+            if(!this->gyro_params_.empty()){
+                gyro_mean = this->gyro_params_[0].mean;
+                gyro_sigma = this->gyro_params_[0].std_dev;
+            }
+        }
+    }
+    // based on the existing noise and bias model params create a gaussian probability function to model the noise and bias of the sensor
+    if (this->accel_noise_vec_.size() != 3) {this->accel_noise_vec_.resize(3);}
+    if (this->gyro_noise_vec_.size() != 3) {this->gyro_noise_vec_.resize(3);}
+    for(int i=0; i<3; ++i){
+        this->accel_noise_.param(
+        std::normal_distribution<double>::param_type(
+            accel_mean, accel_sigma
+        ));
+        this->accel_noise_vec_[i] = this->accel_noise_(this->gen_);
+
+        this->gyro_noise_.param(
+        std::normal_distribution<double>::param_type(
+            gyro_mean, gyro_sigma
+        ));
+        this->gyro_noise_vec_[i] = this->gyro_noise_(this->gen_);
+    }
 
 
 
 
 
+    // ---------------------- SENSOR PARAMS UPDATION LOGIC HERE ----------------------
+    // gzmsg << "=== TestSensorDataPlugin: Accelerated Noise Parameters ===\n";
+    // const std::string axes[] = {"X", "Y", "Z"};
+    // for(size_t i = 0; i < this->accel_params_.size(); ++i) {
+    //     gzmsg << "  Axis " << axes[i] << " -> "
+    //             << "Mean: " << this->accel_params_[i].mean 
+    //             << ", StdDev: " << this->accel_params_[i].std_dev 
+    //             << ", BiasMean: " << this->accel_params_[i].bias_mean 
+    //             << ", BiasStdDev: " << this->accel_params_[i].bias_std_dev << "\n";
+    // }
 }
 
 void TestSensorDataPlugin::Update(
@@ -336,6 +452,9 @@ void TestSensorDataPlugin::Update(
 ){
     if(_info.paused){return;}
 
+    // on physics step update mod the imu values ??
+    // i think this should be in post update step for now
+    // major physics logic changes should only be incorporated here
 
 
 }
@@ -355,9 +474,21 @@ void TestSensorDataPlugin::PostUpdate(
     const gz::math::Vector3d& accel = accel_comp->Data();
     const gz::math::Vector3d& gyro = gyro_comp->Data();
 
+    // for the first test logic for the imu data updation put logic here , lets not modify the in-physics sensor unless and untill we create our own sensor model
+    gz::math::Vector3d new_accel;
+    gz::math::Vector3d new_gyro;
+    if(!this->accel_noise_vec_.empty()){
+        this->updateImuReadings(
+            new_accel,
+            new_gyro,
+            accel,
+            gyro
+        );
+    }
+
     // publish imu data at the required rate to the final topic let name be "imu/real"
     if(this->publishers_initialized_){
-        this->publishSensorData(accel, gyro, _info);
+        this->publishSensorData(new_accel, new_gyro, _info);
     }
             
 }
