@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+65607e104a90fe497954f9c3b4f0ddd1 moc_sensor_gui.cpp
+e3d879f1b3e802daaaeb0921516ed8f5 qrc_SensorParamPlugin.cpp

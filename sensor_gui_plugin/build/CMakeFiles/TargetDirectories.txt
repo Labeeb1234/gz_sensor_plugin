@@ -1,0 +1,3 @@
+/home/inlabust/labeeb/block_step/sensor_gui_plugin/build/CMakeFiles/SensorParamPlugin.dir
+/home/inlabust/labeeb/block_step/sensor_gui_plugin/build/CMakeFiles/edit_cache.dir
+/home/inlabust/labeeb/block_step/sensor_gui_plugin/build/CMakeFiles/rebuild_cache.dir
