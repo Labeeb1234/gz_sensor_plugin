@@ -29,9 +29,11 @@
   [Watch Vid-1 (MP4)](https://github.com/user-attachments/assets/3d55f9d0-4135-4539-9424-0400a09057e1)
 
 - **Vid-2** [With Sensor Noise and Bias using Gaussian Probability Distribution]
+
   [Watch Vid-2 (MP4)](https://github.com/user-attachments/assets/f618f34e-0cf9-40ae-9b3c-19b6d5bf5552)
 
 - **Vid-3** [Working of the custom gui plugin for dynamically changing the sensor model params]
+
   [Watch Vid-3 (MP4)](https://github.com/user-attachments/assets/46c10a4d-8ab8-46c3-bfb5-9e415ba6)
 
 ## Notes:
