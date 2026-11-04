@@ -5,7 +5,7 @@
 
 ## Demo Video
  - **Vid-1** [Without any Sensor Noise or Bias]
-<video src="media/demo.mp4" controls width="100%"></video>
+<video src="media/imu_ideal.mp4.mp4" controls width="100%"></video>
 
 
 
